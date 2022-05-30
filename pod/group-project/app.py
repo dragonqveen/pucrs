@@ -57,13 +57,4 @@ def ler_arquivos(*args):
     print(f"\nEmpréstimos bem-sucedidos: {bibSys.Livro.emprestimos_realizados}\nDevoluções bem-sucedidas: {bibSys.Livro.devolucoes_realizadas}")
             
 
-#mostrar o total de operações de emprestimos e de devoluções realizadas (obtidas da classe livros)
-""" def mensagem():
-    total_emprestimos = int(bibSys.Livro().controle("emprestimo")) - 1 
-    total_devolucao = int(bibSys.Livro().controle("devolução")) - 1 
-    print("O total de empréstimos foi de " + total_emprestimos + " e o total de devoluções foi de: " + total_devolucao) """
-
 ler_arquivos(sys.argv)
-
-""" mensagem = mensagem()
-print(mensagem)  """

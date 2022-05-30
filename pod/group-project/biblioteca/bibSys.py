@@ -1,6 +1,5 @@
 # Módulo que precisa implementar as classes: usuário, livro e acervo
 from abc import ABC, abstractmethod
-from tkinter import E
 
 data_atual = ""
 
@@ -160,7 +159,7 @@ class Livro():
             elif(multa == 0.0):
                 raise ErroUsuarioPossuiMulta(cpf) 
             else:
-                Acervo.remover_livro(cod_livro)
+                Acervo.alterar_exemplares(cod_livro, -1)
                 dados_livro = dados_livro.split("__")
                 dados_usuario = dados_usuario.split("__")
 
@@ -238,7 +237,7 @@ class Livro():
 
 
                     # Devolve um exemplar
-                    Acervo.adicionar_exemplar(cod_livro)
+                    Acervo.alterar_exemplares(cod_livro, 1)
                     Livro.devolucoes_realizadas += 1
                     return f"Livro: {titulo_livro}\nUsuario: {nome_usuario}"
                     
@@ -278,7 +277,7 @@ class Acervo():
             livro_existe =  Acervo.pesquisar_livro(titulo) != ""
 
             if(livro_existe): 
-                codigo, exemplares = Acervo.adicionar_exemplar(titulo)
+                codigo, exemplares = Acervo.alterar_exemplares(titulo, 1)
                 return f"Livro: {codigo} - {titulo}\nNovo numero de exemplares: {exemplares}"
             else:
                 codigo = Acervo.gerar_codigo()
@@ -286,14 +285,14 @@ class Acervo():
                 return f"Livro: {codigo} - {titulo}\nExemplares: {exemplares}"
 
     @staticmethod
-    def adicionar_exemplar(identificador):
+    def alterar_exemplares(identificador, modificador):
         acervo = Utils.ler_arquivo(ARQ_ACERVO)
         dados = []
         with open(ARQ_ACERVO, 'w', encoding="UTF-8") as arq:
             for linha in acervo:
                 if identificador in linha:
                     linha = linha.split("__")
-                    linha[-1] = str((int(linha[-1]) + 1)) + "\n"
+                    linha[-1] = str((int(linha[-1]) + modificador)) + "\n"
 
                     dados = [linha[0], linha[-1]]
 
@@ -301,19 +300,36 @@ class Acervo():
 
                 arq.write(linha)
         return dados
+    
+    # ALT
+    """ @staticmethod
+    def alterar_exemplares(identificador, modificador):
+        dados = []
 
-    @staticmethod      
-    def remover_livro(cod_livro):
-        acervo = Utils.ler_arquivo(ARQ_ACERVO)
+        with open(ARQ_ACERVO, 'r+', encoding="UTF-8") as arq:
 
-        with open(ARQ_ACERVO, 'w', encoding="UTF-8") as arq:
-            for linha in acervo:
-                if cod_livro in linha:
+            arq.seek(0)
+            pos = 0
+            linha = arq.readline()
+
+            while linha:
+                if identificador in linha:
                     linha = linha.split("__")
-                    linha[-1] = str((int(linha[-1]) - 1)) + "\n"
+                    linha[-1] = str((int(linha[-1]) + modificador)) + " "
+
+                    dados = [linha[0], linha[-1]]
+
                     linha = "__".join(linha)
 
-                arq.write(linha)
+                    arq.seek(pos)
+                    arq.write(linha)
+
+                    break
+
+                pos = arq.tell()
+                linha = arq.readline()
+
+        return dados """
 
     @staticmethod
     def pesquisar_livro(identificador):
@@ -376,24 +392,3 @@ class ErroLivroIndisponivel(ErroGenerico):
 
 class ErroUsuarioPossuiMulta(ErroGenerico):
     pass
-
-
-
-class ErroInformacoes(ErroGenerico):
-    pass
-
-class ErroDevolucao(ErroGenerico):
-    pass
-  
-class ErroEmprestimo(ErroGenerico):
-    pass
-
-
-""" def controle(self, info):
-    # Método que faz o controle de quantos exemplares de livros foram emprestados e quantos foram devolvidos
-    if info == "devolução":
-        conta_devolucao = conta_devolucao + 1
-        return conta_devolucao
-    elif info == "emprestimo":
-        conta_emprestimo = conta_emprestimo + 1
-        return conta_emprestimo  """
